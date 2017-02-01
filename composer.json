@@ -1,0 +1,24 @@
+{
+  "name": "ayesh/wordpress-password-hash",
+  "type": "wordpress-plugin",
+  "license": "GPL",
+  "description": "Wordpress plugin to change its password hashing mechanism with PHP native password_* set of functions. ",
+  "homepage": "https://wordpress.org/plugins/password-hash/",
+  "authors": [
+    {
+      "name": "Ayesh Karunaratne",
+      "email": "ayesh@ayesh.me",
+      "homepage": "https://ayesh.me"
+    }
+  ],
+  "keywords": [
+    "bcrypt php-bcrypt wordpress wordpress-plugin wordpress-security"
+  ],
+  "support": {
+    "issues": "https://github.com/Ayesh/wordpress-password-hash/issues"
+  },
+  "require": {
+    "php": ">=5.5.0",
+    "composer/installers": "~1.0"
+  }
+}
