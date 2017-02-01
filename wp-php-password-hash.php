@@ -14,7 +14,7 @@ if (function_exists('wp_hash_password')) {
   add_action( 'admin_notices', 'wp_password_hash_warn_incompatibility' );
 }
 
-
+if (!function_exists('wp_hash_password') && function_exists('password_hash')) :
 /**
  * Check the user-supplied password against the hash from the database. Falls
  *  back to core password hashing mechanism if the password hash if of unknown
@@ -65,6 +65,11 @@ function wp_check_password( $password, $hash, $user_id = '' ) {
   }
 
   $check = $wp_hasher->CheckPassword($password, $hash);
+  if ($check) {
+    // If the password is correct, rehash it to the new format.
+    wp_set_password($password, $user_id);
+    $hash = wp_hash_password($password);
+  }
 
   /** documented in wp-includes/pluggable.php */
   return apply_filters( 'check_password', $check, $password, $hash, $user_id );
@@ -75,7 +80,7 @@ function wp_check_password( $password, $hash, $user_id = '' ) {
  * Hash password using @see password_hash() function if available.
  *
  * @param string $password Plaintext password
- * @return bool|string
+ * @return false|string
  */
 function wp_hash_password( $password ) {
   $options = apply_filters( 'wp_php_password_hash_options', array() );
@@ -91,20 +96,21 @@ function wp_hash_password( $password ) {
  */
 function wp_set_password( $password, $user_id ) {
   /**
-   * @var \wpdb $db
+   * @var \wpdb $wpdb
    */
-  global $db;
+  global $wpdb;
 
   $hash = wp_hash_password($password);
   $fields = array('user_pass' => &$hash, 'user_activation_key' => '');
   $conditions = array('ID' => $user_id);
-  $db->update($db->users, $fields, $conditions);
+  $wpdb->update($wpdb->users, $fields, $conditions);
 
   wp_cache_delete( $user_id, 'users' );
 
   return $hash;
 }
 
+endif;
 
 function wp_password_hash_warn_incompatibility() {
   wp_password_hash_set_message('Your current system configuration does support password hashing with password_hash() function. Please upgrade your PHP version to PHP 5.5 or later, or disable the "PHP native password hash" plugin.');
