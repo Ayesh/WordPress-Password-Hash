@@ -57,6 +57,11 @@ function wp_check_password( $password, $hash, $user_id = '' ) {
     return apply_filters( 'check_password', $check, $password, $hash, $user_id );
   }
 
+  //if class doesnt exist, pull it in
+  if(!class_exists("PasswordHash")) {
+    require_once ABSPATH . WPINC . '/class-phpass.php';
+  }
+
   // If the stored hash is longer than an MD5, presume the
   // new style phpass portable hash.
   if ( empty($wp_hasher) ) {
