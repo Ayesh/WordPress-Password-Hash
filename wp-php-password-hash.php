@@ -35,7 +35,8 @@ function wp_check_password( $password, $hash, $user_id = '' ) {
   $info = password_get_info($hash);
   if (!empty($info['algo'])) {
     $check = password_verify($password, $hash);
-    if ($check && password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+    $options = apply_filters( 'wp_php_password_hash_options', array() );
+    if ($check && password_needs_rehash($hash, PASSWORD_DEFAULT, $options)) {
       $hash = wp_set_password($password, $user_id);
     }
 
