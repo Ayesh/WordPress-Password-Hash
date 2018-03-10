@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PHP native password hash
- * Version:     1.0
+ * Version:     1.5
  * Description: Swaps out Wordpress's password hashing mechanism with PHP 5.5's `password_hash()` functions set, and automatically rehashes the existing passwords on users next successful login. Provides safety against dictionary attacks, time-attacks, brute-force attacks.
  * Licence:     GPLv2 or later
  * Author:      Ayesh Karunaratne
@@ -24,7 +24,7 @@ if (!function_exists('wp_hash_password') && function_exists('password_hash')) :
  *	against the $hash + $password
  * @uses PasswordHash::CheckPassword
  *
- * @param string     $password Plaintext user's password
+ * @param string     $password Plain text user's password
  * @param string     $hash     Hash of the user's password to check against.
  * @param string|int $user_id  Optional. User ID.
  * @return bool False, if the $password does not match the hashed password
@@ -94,7 +94,7 @@ function wp_hash_password( $password ) {
 /**
  * Sets password hash taken from @see wp_hash_password().
  *
- * @param string $password password in plaintext.
+ * @param string $password password in plain text.
  * @param int $user_id User ID of the user.
  * @return bool|string
  */
