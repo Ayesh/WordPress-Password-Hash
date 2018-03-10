@@ -8,13 +8,13 @@ Requires PHP: 5.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Makes Wordpress use PHP's native password_hash() functions for portable, stronger, and time-attack safe bcrypt and Argon2 hashes.
+Makes WordPress use PHP's native password_hash() functions for portable, stronger, and time-attack safe bcrypt and Argon2 hashes.
 
 == Description ==
 
 *Requires PHP 5.5 or later*
 
-This plugin swaps out Wordpress core's password hashing mechanism with PHP 5.5's `password_hash()` and its accompanying functions. By default, PHP uses bcrypt to hash the passwords. If available, this plugin will use modern Argon2 algorithm. The transition will be transparent.
+This plugin swaps out WordPress core's password hashing mechanism with PHP 5.5's `password_hash()` and its accompanying functions. By default, PHP uses bcrypt to hash the passwords. If available, this plugin will use modern Argon2 algorithm. The transition will be transparent.
 
 *  A password salt will be generated using a Cryptographically Secure Pseudo-Random Number Generator (`CSPRNG`)
 *  Password hashes are safe from dictionary attacks with rainbow tables or any other precomputed hash lists, because a secure salt is generated for each password.
@@ -80,3 +80,6 @@ Pier to pier networking.
 = 1.4 =
 * Skipped 1.3 version because a WIP Argon2i support conflicted with the bug fix (#2). Argon2i support will be added in a future release.
 * Fixes an error with password validation when the PasswordHash class from Wordpress core is not loaded. See https://github.com/Ayesh/wordpress-password-hash/pull/2
+
+= 1.5 =
+* Fix a security issue with the password verification when updating from a password_hash()-compatible hashing algorithm to another. Thanks to Steve Thomas (Sc00bz on Github).
