@@ -1,8 +1,8 @@
 === PHP Native password hash ===
 Contributors: ayeshrajans
-Tags: password, password hashing, password_hash, bcrypt, argon2, sodium, password security, security
+Tags: password, password hashing, password_hash, bcrypt, argon2, argon2i, sodium, password security, security
 Requires at least: 3.9.2
-Tested up to: 4.9
+Tested up to: 5.0
 Stable tag: 1.5
 Requires PHP: 5.5
 License: GPLv2 or later
@@ -12,6 +12,7 @@ Makes WordPress use PHP's native password_hash() functions for portable, stronge
 
 == Description ==
 
+[![RIPS CodeRisk](https://coderisk.com/wp/plugin/password-hash/badge "RIPS CodeRisk")](https://coderisk.com/wp/plugin/password-hash) ![PHP versions](https://img.shields.io/badge/PHP-%5E5.5%20||%20%5E7.0-8892BF.svg "PHP versions")
 *Requires PHP 5.5 or later*
 
 This plugin swaps out WordPress core's password hashing mechanism with PHP 5.5's `password_hash()` and its accompanying functions. By default, PHP uses bcrypt to hash the passwords. If available, this plugin will use modern Argon2 algorithm. The transition will be transparent.
