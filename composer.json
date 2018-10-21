@@ -11,7 +11,7 @@
       "homepage": "https://ayesh.me"
     }
   ],
-  "keywords": ["password", "password hashing", "password_hash", "bcrypt", "argon2", "argon2i", "sodium", "password security", "security", "wordpress", "wordpress-security", "wordpress-plugin"],
+  "keywords": ["password", "password_hash", "bcrypt", "argon2", "argon2i", "sodium", "password-security", "security", "wordpress", "wordpress-security", "wordpress-plugin"],
   "support": {
     "issues": "https://github.com/Ayesh/wordpress-password-hash/issues"
   },
