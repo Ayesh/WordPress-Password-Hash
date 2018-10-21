@@ -1,7 +1,7 @@
 {
   "name": "ayesh/wordpress-password-hash",
   "type": "wordpress-plugin",
-  "license": "GPL",
+  "license": "GPL-2.0-or-later",
   "description": "Wordpress plugin to change its password hashing mechanism with PHP native password_* set of functions. ",
   "homepage": "https://wordpress.org/plugins/password-hash/",
   "authors": [
@@ -11,14 +11,15 @@
       "homepage": "https://ayesh.me"
     }
   ],
-  "keywords": [
-    "bcrypt php-bcrypt wordpress wordpress-plugin wordpress-security"
-  ],
+  "keywords": ["password", "password hashing", "password_hash", "bcrypt", "argon2", "argon2i", "sodium", "password security", "security", "wordpress", "wordpress-security", "wordpress-plugin"],
   "support": {
     "issues": "https://github.com/Ayesh/wordpress-password-hash/issues"
   },
   "require": {
     "php": ">=5.5.0",
     "composer/installers": "~1.0"
+  },
+  "autoload": {
+    "files": ["wp-php-password-hash.php"]
   }
 }
