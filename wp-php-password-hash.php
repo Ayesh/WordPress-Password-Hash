@@ -5,7 +5,7 @@
  * Description: Swaps out WordPress's password hashing mechanism with PHP 5.5's `password_hash()` functions set, and automatically rehashes the existing passwords on users next successful login. Provides safety against dictionary attacks, time-attacks, brute-force attacks.
  * Licence:     GPLv2 or later
  * Author:      Ayesh Karunaratne
- * Author URI:  https://ayesh.me
+ * Author URI:  https://ayesh.me/open-source
  */
 
 if (function_exists('wp_hash_password')) {
