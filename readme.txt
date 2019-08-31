@@ -2,7 +2,7 @@
 Contributors: ayeshrajans
 Tags: password, password hashing, password_hash, bcrypt, argon2, argon2i, sodium, password security, security
 Requires at least: 3.9.2
-Tested up to: 5.1
+Tested up to: 5.3
 Stable tag: 1.5
 Requires PHP: 5.5
 License: GPLv2 or later
