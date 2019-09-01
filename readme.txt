@@ -12,9 +12,6 @@ Makes WordPress use PHP's native password_hash() functions for portable, stronge
 
 == Description ==
 
-[![RIPS CodeRisk](https://coderisk.com/wp/plugin/password-hash/badge "RIPS CodeRisk")](https://coderisk.com/wp/plugin/password-hash) ![PHP versions](https://img.shields.io/badge/PHP-%5E5.5%20||%20%5E7.0-8892BF.svg "PHP versions")
-*Requires PHP 5.5 or later*
-
 This plugin swaps out WordPress core's password hashing mechanism with PHP 5.5's `password_hash()` and its accompanying functions. By default, PHP uses bcrypt to hash the passwords. If available, this plugin will use modern Argon2 algorithm. The transition will be transparent.
 
 *  A password salt will be generated using a Cryptographically Secure Pseudo-Random Number Generator (`CSPRNG`)
@@ -55,7 +52,7 @@ hash field in your users table has the format `$2y$10...`. Those who have not up
 format. However, if the plugin is unable to override the password hashing algorithm from Wordpress core, you will see a
 notification in your dashboard. If you do not see anything, you are golden.
 
-= How to use `Argon2I` and `Argon2I` hashing algorithms? =
+= How to use `Argon2I` and `Argon2ID` hashing algorithms? =
 
 To keep the plugin size minimal, this plugin does not offer a UI configuration page. You can set the password hashing
 algorithm with a configuration value set in `wp-config.php` file.
@@ -68,8 +65,8 @@ this configuration value unless you know what you are doing.
 `define( 'WP_PASSWORD_HASH_ALGO', PASSWORD_ARGON2ID );`
 
 You can use the following values depending on your PHP version:
- * **PHP 7.2 or later**: `PASSWORD_ARGON2I`
- * **PHP 7.3 or later**: `PASSWORD_ARGON2ID` (recommended)
+ - **PHP 7.2 or later**: `PASSWORD_ARGON2I`
+ - **PHP 7.3 or later**: `PASSWORD_ARGON2ID` (recommended)
 
 **Existing password hashes will be updated the next time the user logs in. Existing hashes will be checked using the existing algorithm regardless of this configuration.**
 
