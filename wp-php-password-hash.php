@@ -8,125 +8,51 @@
  * Author URI:  https://ayesh.me/open-source
  */
 
-if (function_exists('wp_hash_password')) {
-  add_action( 'admin_notices', 'wp_password_hash_warn_conflict' );
-} elseif (!function_exists('password_hash')) {
-  add_action( 'admin_notices', 'wp_password_hash_warn_incompatibility' );
-}
-
-if (!function_exists('wp_hash_password') && function_exists('password_hash')) :
-/**
- * Check the user-supplied password against the hash from the database. Falls
- *  back to core password hashing mechanism if the password hash if of unknown
- *  format.
- *
- * @global PasswordHash $wp_hasher PHPass object used for checking the password
- *	against the $hash + $password
- * @uses PasswordHash::CheckPassword
- *
- * @param string     $password Plain text user's password
- * @param string     $hash     Hash of the user's password to check against.
- * @param string|int $user_id  Optional. User ID.
- * @return bool False, if the $password does not match the hashed password
- *
- */
-function wp_check_password( $password, $hash, $user_id = '' ) {
-  // Check if the current hash is known by PHP natively.
-  $info = password_get_info($hash);
-  if (!empty($info['algo'])) {
-    $check = password_verify($password, $hash);
-    if ($check && password_needs_rehash($hash, PASSWORD_DEFAULT)) {
-      $hash = wp_set_password($password, $user_id);
-    }
-
-    return apply_filters( 'check_password', $check, $password, $hash, $user_id );
-  }
-
-  // This part is copied from the WP core password verification function.
-  global $wp_hasher;
-
-  // If the hash is still md5...
-  if ( strlen($hash) <= 32 ) {
-    $check = hash_equals( $hash, md5( $password ) );
-    if ( $check && $user_id ) {
-      // Rehash using new hash.
-      wp_set_password($password, $user_id);
-      $hash = wp_hash_password($password);
-    }
-
-    return apply_filters( 'check_password', $check, $password, $hash, $user_id );
-  }
-
-  // If the stored hash is longer than an MD5, presume the
-  // new style phpass portable hash.
-  if ( empty($wp_hasher) ) {
-    // If class is not loaded, load it first.
-    if( !class_exists('PasswordHash') ) {
-      require_once ABSPATH . WPINC . '/class-phpass.php';
-    }
-    // By default, use the portable hash from phpass
-    $wp_hasher = new PasswordHash(8, true);
-  }
-
-  $check = $wp_hasher->CheckPassword($password, $hash);
-  if ($check) {
-    // If the password is correct, rehash it to the new format.
-    wp_set_password($password, $user_id);
-    $hash = wp_hash_password($password);
-  }
-
-  /** documented in wp-includes/pluggable.php */
-  return apply_filters( 'check_password', $check, $password, $hash, $user_id );
-}
-
-
-/**
- * Hash password using @see password_hash() function if available.
- *
- * @param string $password Plaintext password
- * @return false|string
- */
-function wp_hash_password( $password ) {
-  $options = apply_filters( 'wp_php_password_hash_options', array() );
-  return password_hash( $password, PASSWORD_DEFAULT, $options );
+if ( function_exists( 'wp_hash_password' ) ) {
+	$hasher = wp_password_hash_include();
+	$hasher::setAdminWarning( 'Another plugin has already overridden the password hashing mechanism. The "PHP native password hash" plugin will not work.' );
+} elseif ( ! function_exists( 'password_hash' ) ) {
+	$hasher = wp_password_hash_include();
+	$hasher::setAdminWarning( 'Your current system configuration does support password hashing with password_hash() function. Please upgrade your PHP version to PHP 5.5 or later, or disable the "PHP native password hash" plugin.' );
 }
 
 /**
- * Sets password hash taken from @see wp_hash_password().
- *
- * @param string $password password in plain text.
- * @param int $user_id User ID of the user.
- * @return bool|string
+ * @return \Ayesh\WP_PasswordHash\PasswordHash
  */
-function wp_set_password( $password, $user_id ) {
-  /**
-   * @var \wpdb $wpdb
-   */
-  global $wpdb;
+function wp_password_hash_include() {
+	static $hasher;
+	require_once __DIR__ . '/src/PasswordHash.php';
+	if ( ! $hasher ) {
+		global $wpdb;
+		$hasher = new \Ayesh\WP_PasswordHash\PasswordHash( $wpdb );
+	}
 
-  $hash = wp_hash_password($password);
-  $fields = array('user_pass' => &$hash, 'user_activation_key' => '');
-  $conditions = array('ID' => $user_id);
-  $wpdb->update($wpdb->users, $fields, $conditions);
-
-  wp_cache_delete( $user_id, 'users' );
-
-  return $hash;
+	return $hasher;
 }
+
+/**
+ * The function calls below override the WordPress-provided functions.
+ *
+ * All of the plugin functionality is contained in @see
+ * \Ayesh\WP_PasswordHash\PasswordHash class. Check the called proxy method for
+ * further documentation.
+ */
+
+if ( ! function_exists( 'wp_hash_password' ) && function_exists( 'password_hash' ) ) :
+
+	function wp_check_password( $password, $hash, $user_id = '' ) {
+		$hasher = wp_password_hash_include();
+		return $hasher->checkPassword( $password, $hash, $user_id );
+	}
+
+	function wp_hash_password( $password ) {
+		$hasher = wp_password_hash_include();
+		return $hasher->getHash( $password );
+	}
+
+	function wp_set_password( $password, $user_id ) {
+		$hasher = wp_password_hash_include();
+		return $hasher->storeHash( $password, $user_id );
+	}
 
 endif;
-
-function wp_password_hash_warn_incompatibility() {
-  wp_password_hash_set_message('Your current system configuration does support password hashing with password_hash() function. Please upgrade your PHP version to PHP 5.5 or later, or disable the "PHP native password hash" plugin.');
-}
-
-function wp_password_hash_warn_conflict() {
-  wp_password_hash_set_message('Another plugin has already overridden the password hashing mechanism. The "PHP native password hash" plugin will not work.');
-}
-
-function wp_password_hash_set_message($message) {
-  $class = 'notice notice-error';
-  $message = __( $message );
-
-  printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
-}
