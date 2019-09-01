@@ -90,7 +90,8 @@ class PasswordHash {
 
 	private function checkPasswordNative($password, $hash, $user_id = '') {
 		$check = \password_verify($password, $hash);
-		$rehash = \password_needs_rehash($hash, $this->algorithm);
+		$options = \apply_filters( 'wp_php_password_hash_options', [] );
+		$rehash = \password_needs_rehash($hash, $this->algorithm, $options);
 		return $this->processPasswordCheck($check, $password, $hash, $user_id, $rehash);
 	}
 
