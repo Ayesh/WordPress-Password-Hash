@@ -15,18 +15,15 @@ class PasswordHash {
 	}
 
 	private function initializePasswordConfig() {
-		if (defined('WP_PASSWORD_HASH_ALGO')) {
-			if (!defined(\WP_PASSWORD_HASH_ALGO)) {
-				self::setAdminWarning('You have set the configuration option "WP_PASSWORD_HASH_ALGO" to a password algorithm that does not exist. PHP default passwor hashing algorithm will be used.');
-			}
+		if (\defined('WP_PASSWORD_HASH_ALGO')) {
 			$this->algorithm = \WP_PASSWORD_HASH_ALGO;
 		}
 	}
 
 	public static function setAdminWarning($message) {
 		$message = __($message, self::TEXT_DOMAIN);
-		add_action( 'admin_notices', static function () use ($message) {
-			print "<div class='notice notice-error'>{__($message)}</div>";
+		\add_action( 'admin_notices', static function () use ($message) {
+			print "<div class='notice notice-error'><p>{$message}</p></div>";
 		}
 		);
 	}
@@ -47,52 +44,19 @@ class PasswordHash {
 	 *
 	 */
 	public function checkPassword($password, $hash, $user_id = '') {
-		// Check if the current hash is known by PHP natively.
-		$info = password_get_info($hash);
+		// Check if the hash uses Password API.
+		$info = \password_get_info($hash);
 		if (!empty($info['algo'])) {
-			$check = password_verify($password, $hash);
-			if ($check && password_needs_rehash($hash, PASSWORD_DEFAULT)) {
-				$hash = wp_set_password($password, $user_id);
-			}
-
-			return apply_filters( 'check_password', $check, $password, $hash, $user_id );
+			return $this->checkPasswordNative($password, $hash, $user_id);
 		}
 
-		// This part is copied from the WP core password verification function.
-		global $wp_hasher;
-
-		// If the hash is still md5...
-		if ( strlen($hash) <= 32 ) {
-			$check = hash_equals( $hash, md5( $password ) );
-			if ( $check && $user_id ) {
-				// Rehash using new hash.
-				wp_set_password($password, $user_id);
-				$hash = wp_hash_password($password);
-			}
-
-			return apply_filters( 'check_password', $check, $password, $hash, $user_id );
+		// Is it god forbid MD5?
+		if ( \strlen($hash) <= 32 ) {
+			return $this->checkPasswordMD5($password, $hash, $user_id);
 		}
 
-		// If the stored hash is longer than an MD5, presume the
-		// new style phpass portable hash.
-		if ( empty($wp_hasher) ) {
-			// If class is not loaded, load it first.
-			if( !class_exists('PasswordHash') ) {
-				require_once ABSPATH . WPINC . '/class-phpass.php';
-			}
-			// By default, use the portable hash from phpass
-			$wp_hasher = new \PasswordHash(8, true);
-		}
-
-		$check = $wp_hasher->CheckPassword($password, $hash);
-		if ($check) {
-			// If the password is correct, rehash it to the new format.
-			wp_set_password($password, $user_id);
-			$hash = wp_hash_password($password);
-		}
-
-		/** documented in wp-includes/pluggable.php */
-		return apply_filters( 'check_password', $check, $password, $hash, $user_id );
+		// Fallback to PHPass
+		return $this->checkPasswordPHPass($password, $hash, $user_id);
 	}
 
 	/**
@@ -102,8 +66,8 @@ class PasswordHash {
 	 * @return false|string
 	 */
 	public function getHash($password) {
-		$options = apply_filters( 'wp_php_password_hash_options', array() );
-		return password_hash( $password, $this->algorithm, $options );
+		$options = \apply_filters( 'wp_php_password_hash_options', [] );
+		return \password_hash( $password, $this->algorithm, $options );
 	}
 
 	/**
@@ -113,14 +77,47 @@ class PasswordHash {
 	 * @param int $user_id User ID of the user.
 	 * @return bool|string
 	 */
-	public function storeHash($password, $user_id) {
+	public function updateHash($password, $user_id) {
 		$hash = $this->getHash($password);
 		$fields = [ 'user_pass' => &$hash, 'user_activation_key' => '' ];
 		$conditions = [ 'ID' => $user_id ];
 		$this->wpdb->update($this->wpdb->users, $fields, $conditions);
 
-		wp_cache_delete( $user_id, 'users' );
+		\wp_cache_delete( $user_id, 'users' );
 
 		return $hash;
+	}
+
+	private function checkPasswordNative($password, $hash, $user_id = '') {
+		$check = \password_verify($password, $hash);
+		$rehash = \password_needs_rehash($hash, $this->algorithm);
+		return $this->processPasswordCheck($check, $password, $hash, $user_id, $rehash);
+	}
+
+	private function checkPasswordMD5($password, $hash, $user_id = '') {
+		$check = \hash_equals( $hash, \md5( $password ) );
+		return $this->processPasswordCheck($check, $password, $hash, $user_id);
+	}
+
+	private function checkPasswordPHPass($password, $hash, $user_id = '') {
+		global $wp_hasher;
+
+		if ( empty($wp_hasher) ) {
+			if( !\class_exists('PasswordHash') ) {
+				require_once ABSPATH . WPINC . '/class-phpass.php';
+			}
+			$wp_hasher = new \PasswordHash(8, true);
+		}
+
+		$check = $wp_hasher->CheckPassword($password, $hash);
+		return $this->processPasswordCheck($check, $password, $hash, $user_id);
+	}
+
+	private function processPasswordCheck($check, $password, $hash, $user_id, $rehash = true) {
+		if ($check && $user_id && $rehash) {
+			$hash = $this->updateHash($password, $user_id);
+		}
+
+		return \apply_filters( 'check_password', $check, $password, $hash, $user_id );
 	}
 }

@@ -52,7 +52,7 @@ if ( ! function_exists( 'wp_hash_password' ) && function_exists( 'password_hash'
 
 	function wp_set_password( $password, $user_id ) {
 		$hasher = wp_password_hash_include();
-		return $hasher->storeHash( $password, $user_id );
+		return $hasher->updateHash( $password, $user_id );
 	}
 
 endif;
