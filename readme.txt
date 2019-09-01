@@ -55,9 +55,23 @@ hash field in your users table has the format `$2y$10...`. Those who have not up
 format. However, if the plugin is unable to override the password hashing algorithm from Wordpress core, you will see a
 notification in your dashboard. If you do not see anything, you are golden.
 
-= PHP 7.2 is released with Argon2 support! =
+= How to use `Argon2I` and `Argon2I` hashing algorithms? =
 
-Yes, and that's good news indeed. This plugin will expose an option for administrators to switch to the new Argon2 algorithm, and also make the transition automatic for all existing and new users.
+To keep the plugin size minimal, this plugin does not offer a UI configuration page. You can set the password hashing
+algorithm with a configuration value set in `wp-config.php` file.
+
+Open your `wp-config.php` file at the root of your WordPress site, and find the line that says `That's all, stop editing! Happy publishing`.
+Above this line, you can configure the hashing algorithm you want this plugin to use. Note that a wrong configuration value
+means your users will not be able to login until you fix this configuration option. It's not recommended that you set
+this configuration value unless you know what you are doing.
+
+`define( 'WP_PASSWORD_HASH_ALGO', PASSWORD_ARGON2ID );`
+
+You can use the following values depending on your PHP version:
+ * **PHP 7.2 or later**: `PASSWORD_ARGON2I`
+ * **PHP 7.3 or later**: `PASSWORD_ARGON2ID` (recommended)
+
+**Existing password hashes will be updated the next time the user logs in. Existing hashes will be checked using the existing algorithm regardless of this configuration.**
 
 = How did pirates collaborate before computers? =
 
@@ -80,3 +94,16 @@ Pier to pier networking.
 
 = 1.5 =
 * Fix a security issue with the password verification when updating from a password_hash()-compatible hashing algorithm to another. Thanks to Steve Thomas (Sc00bz on Github).
+
+= 2.0 =
+This is a major rewrite of the plugin. This version still requires PHP 5.5, but WordPress 5.2+ now requires PHP version 5.6 to function, and this is enforced at plugin level as well.
+
+Core functionality of the plugin is extracted to a separate class. This plugin aims to be as light-weight as possible, and this version cuts the main plugin file size to less than half the v1.x size.
+
+There is a new namespaced PasswordHash class that is more cleaner and well-structured compared to our v1 code base.
+
+* Fixes a bug that the hook-provided hash cost changes did not trigger a password rehash. Thanks to Steve Thomas (Sc00bz on Github).
+* Adds support for Argon2I, Argon2ID and any future hashing algorithms PHP will introduce. See the updated FAQ item on how to use the new hashing algorithms.
+* Removed a helper function used to trigger an admin warning if the plugin cannot properly work. The notices are now shown with help of lambda functions (which further reduces the code bloat and load).
+
+
