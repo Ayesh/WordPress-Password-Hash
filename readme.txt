@@ -1,6 +1,6 @@
 === PHP Native password hash ===
 Contributors: ayeshrajans
-Tags: password, password hashing, password_hash, bcrypt, argon2, argon2i, sodium, password security, security
+Tags: password, password hashing, password_hash, bcrypt, argon2, argon2i, argon2id, sodium, password security, security
 Requires at least: 3.9.2
 Tested up to: 5.3
 Stable tag: 2.0
