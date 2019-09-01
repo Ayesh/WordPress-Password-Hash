@@ -4,7 +4,7 @@
 namespace Ayesh\WP_PasswordHash;
 
 
-class PasswordHash {
+final class PasswordHash {
 	private $algorithm = \PASSWORD_DEFAULT;
 	private $wpdb;
 	const TEXT_DOMAIN = 'password-hash';
