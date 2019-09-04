@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PHP native password hash
- * Version:     2.0
+ * Version:     2.1
  * Description: Swaps out WordPress's password hashing mechanism with PHP 5.5's `password_hash()` functions set, and automatically rehashes the existing passwords on users next successful login. Provides safety against dictionary attacks, time-attacks, brute-force attacks.
  * Licence:     GPLv2 or later
  * Author:      Ayesh Karunaratne
