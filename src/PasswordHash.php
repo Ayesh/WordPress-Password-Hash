@@ -6,6 +6,7 @@ namespace Ayesh\WP_PasswordHash;
 
 final class PasswordHash {
 	private $algorithm = \PASSWORD_DEFAULT;
+	private $algorithm_options = [];
 	private $wpdb;
 	const TEXT_DOMAIN = 'password-hash';
 
@@ -17,6 +18,11 @@ final class PasswordHash {
 	private function initializePasswordConfig() {
 		if (\defined('WP_PASSWORD_HASH_ALGO')) {
 			$this->algorithm = \WP_PASSWORD_HASH_ALGO;
+
+			if (\defined('WP_PASSWORD_HASH_OPTIONS') && is_array(\WP_PASSWORD_HASH_OPTIONS)) {
+				$this->algorithm_options = \WP_PASSWORD_HASH_OPTIONS;
+			}
+			$this->algorithm_options = \apply_filters( 'wp_php_password_hash_options', $this->algorithm_options );
 		}
 	}
 
@@ -66,8 +72,7 @@ final class PasswordHash {
 	 * @return false|string
 	 */
 	public function getHash($password) {
-		$options = \apply_filters( 'wp_php_password_hash_options', [] );
-		return \password_hash( $password, $this->algorithm, $options );
+		return \password_hash( $password, $this->algorithm, $this->algorithm_options );
 	}
 
 	/**
@@ -90,8 +95,7 @@ final class PasswordHash {
 
 	private function checkPasswordNative($password, $hash, $user_id = '') {
 		$check = \password_verify($password, $hash);
-		$options = \apply_filters( 'wp_php_password_hash_options', [] );
-		$rehash = \password_needs_rehash($hash, $this->algorithm, $options);
+		$rehash = \password_needs_rehash($hash, $this->algorithm, $this->algorithm_options);
 		return $this->processPasswordCheck($check, $password, $hash, $user_id, $rehash);
 	}
 
