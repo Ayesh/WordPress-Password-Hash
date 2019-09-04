@@ -123,4 +123,5 @@ There is a new namespaced PasswordHash class that is more cleaner and well-struc
 * Adds support for Argon2I, Argon2ID and any future hashing algorithms PHP will introduce. See the updated FAQ item on how to use the new hashing algorithms.
 * Removed a helper function used to trigger an admin warning if the plugin cannot properly work. The notices are now shown with help of lambda functions (which further reduces the code bloat and load).
 
-
+= 2.1 =
+* Adds support for "WP_PASSWORD_HASH_OPTIONS" configuration option that can be set in `wp-config.php` to configure password hashing options.
