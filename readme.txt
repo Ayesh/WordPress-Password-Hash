@@ -68,6 +68,26 @@ You can use the following values depending on your PHP version:
  - **PHP 7.2 or later**: `PASSWORD_ARGON2I`
  - **PHP 7.3 or later**: `PASSWORD_ARGON2ID` (recommended)
 
+= How do I configure options for the specified hashing algorithm? =
+
+Alrighty folks, read carefully: This plugin can listen to a configuration option you specify and pass it along to the hashing
+process. Please make sure you are absolutely sure about the values you set here. If you set a value too easy to crack,
+you will open up a security vulnerability in your site. If you set a value too high, your server will take too much resources.
+
+This plugin does not make any effort to *validate* the configuration you set. If you do not configure a value, plugin will
+use the default value your PHP version comes with.
+
+If you would still like to configure these options, similar to the way you set the hashing algorithm, open the `wp-config.php`
+file for your WordPress site (at root of your WordPress installation), and right below the line that you configure hashing
+algorithm (see FAQ above), set your configuration values as well. Here is an example (not necessarily a recommendation):
+
+`define( 'WP_PASSWORD_HASH_OPTIONS', ['memory_cost' => 2<<16, 'time_cost' => \PASSWORD_ARGON2_DEFAULT_TIME_COST, 'threads' => \PASSWORD_ARGON2_DEFAULT_THREADS]] );`
+
+The values you set here will be different based on the algorithm you set. You *must* set the `WP_PASSWORD_HASH_ALGO`
+configuration in order for this to be effective.
+
+See https://www.php.net/manual/en/password.constants.php for more examples and information.
+
 **Existing password hashes will be updated the next time the user logs in. Existing hashes will be checked using the existing algorithm regardless of this configuration.**
 
 = How did pirates collaborate before computers? =
