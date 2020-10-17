@@ -2,7 +2,7 @@
 Contributors: ayeshrajans
 Tags: password, password hashing, password_hash, bcrypt, argon2, argon2i, argon2id, sodium, password security, security
 Requires at least: 3.9.2
-Tested up to: 5.4
+Tested up to: 5.6
 Stable tag: 2.1
 Requires PHP: 5.5
 License: GPLv2 or later
@@ -125,3 +125,4 @@ There is a new namespaced PasswordHash class that is more cleaner and well-struc
 
 = 2.1 =
 * Adds support for "WP_PASSWORD_HASH_OPTIONS" configuration option that can be set in `wp-config.php` to configure password hashing options.
+* Update WordPress core "Tested up to" field to WordPress 5.6.
