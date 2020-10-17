@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Ayesh\WP_PasswordHash;
-
 
 final class PasswordHash {
 	private $algorithm = \PASSWORD_DEFAULT;
@@ -29,8 +27,8 @@ final class PasswordHash {
 	public static function setAdminWarning($message) {
 		$message = __($message, self::TEXT_DOMAIN);
 		\add_action( 'admin_notices', static function () use ($message) {
-			print "<div class='notice notice-error'><p>{$message}</p></div>";
-		}
+				print "<div class='notice notice-error'><p>{$message}</p></div>";
+			}
 		);
 	}
 
@@ -72,7 +70,7 @@ final class PasswordHash {
 	 * @return false|string
 	 */
 	public function getHash($password) {
-		return \password_hash( $password, $this->algorithm, $this->algorithm_options );
+		return \password_hash($password, $this->algorithm, $this->algorithm_options);
 	}
 
 	/**
