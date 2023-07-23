@@ -1,4 +1,4 @@
-=== PHP Native password hash ===
+=== PHP Native Password Hash ===
 Contributors: ayeshrajans
 Tags: password, password hashing, password_hash, bcrypt, argon2, argon2i, argon2id, sodium, password security, security
 Requires at least: 5.2
@@ -49,7 +49,7 @@ impact on using this plugin.
 
 The easiest way would be to check your database from PHPMyAdmin or any other software in its line. Check if the password
 hash field in your users table has the format `$2y$10...`. Those who have not updated their hashes will have a different
-format. However, if the plugin is unable to override the password hashing algorithm from Wordpress core, you will see a
+format. However, if the plugin is unable to override the password hashing algorithm from WordPress core, you will see a
 notification in your dashboard. If you do not see anything, you are golden.
 
 = How to use `Argon2I` and `Argon2ID` hashing algorithms? =
@@ -59,7 +59,7 @@ algorithm with a configuration value set in `wp-config.php` file.
 
 Open your `wp-config.php` file at the root of your WordPress site, and find the line that says `That's all, stop editing! Happy publishing`.
 Above this line, you can configure the hashing algorithm you want this plugin to use. Note that a wrong configuration value
-means your users will not be able to login until you fix this configuration option. It's not recommended that you set
+means your users will not be able to log in until you fix this configuration option. It's not recommended that you set
 this configuration value unless you know what you are doing.
 
 `define( 'WP_PASSWORD_HASH_ALGO', PASSWORD_ARGON2ID );`
@@ -103,11 +103,11 @@ Pier to pier networking.
 * Fixed a bug for PHP 5.5 users whose PHP core lacks the time-safe hash_equals function, resulting in a fatal error. This version introduces a polyfill to add that functionality for PHP 5.5 users. Users with newer PHP versions will use PHP-provided hash_equals() function.
 
 = 1.2 =
-* This plugin now requires Wordpress minimum version 3.9.2 the least, and uses the hash_equals() function polyfill provided by Wordpress core.
+* This plugin now requires WordPress minimum version 3.9.2 the least, and uses the hash_equals() function polyfill provided by WordPress core.
 
 = 1.4 =
 * Skipped 1.3 version because a WIP Argon2i support conflicted with the bug fix (#2). Argon2i support will be added in a future release.
-* Fixes an error with password validation when the PasswordHash class from Wordpress core is not loaded. See https://github.com/Ayesh/wordpress-password-hash/pull/2
+* Fixes an error with password validation when the PasswordHash class from WordPress core is not loaded. See https://github.com/Ayesh/wordpress-password-hash/pull/2
 
 = 1.5 =
 * Fix a security issue with the password verification when updating from a password_hash()-compatible hashing algorithm to another. Thanks to Steve Thomas (Sc00bz on Github).
@@ -117,9 +117,9 @@ This is a major rewrite of the plugin. This version still requires PHP 5.5, but 
 
 Core functionality of the plugin is extracted to a separate class. This plugin aims to be as light-weight as possible, and this version cuts the main plugin file size to less than half the v1.x size.
 
-There is a new namespaced PasswordHash class that is more cleaner and well-structured compared to our v1 code base.
+There is a new namespaced PasswordHash class that is cleaner and well-structured compared to our v1 code base.
 
-* Fixes a bug that the hook-provided hash cost changes did not trigger a password rehash. Thanks to Steve Thomas (Sc00bz on Github).
+* Fixes a bug that the hook-provided hash cost changes did not trigger a password rehash. Thanks to Steve Thomas (Sc00bz on GitHub).
 * Adds support for Argon2I, Argon2ID and any future hashing algorithms PHP will introduce. See the updated FAQ item on how to use the new hashing algorithms.
 * Removed a helper function used to trigger an admin warning if the plugin cannot properly work. The notices are now shown with help of lambda functions (which further reduces the code bloat and load).
 
@@ -129,4 +129,6 @@ There is a new namespaced PasswordHash class that is more cleaner and well-struc
 
 = 3.0 =
 * Drops support for PHP < 7.0
+* Class methods and functions have return types where applicable.
 * Tested upto WordPress 6.3
+* Uses FQFN/FQCN where available as a micro-optimization
