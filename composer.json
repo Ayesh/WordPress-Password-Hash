@@ -7,8 +7,8 @@
   "authors": [
     {
       "name": "Ayesh Karunaratne",
-      "email": "ayesh@ayesh.me",
-      "homepage": "https://ayesh.me"
+      "email": "ayesh@aye.sh",
+      "homepage": "https://aye.sh"
     }
   ],
   "keywords": ["password", "password_hash", "bcrypt", "argon2", "argon2i", "sodium", "password-security", "security", "wordpress", "wordpress-security", "wordpress-plugin"],
@@ -16,13 +16,15 @@
     "issues": "https://github.com/Ayesh/wordpress-password-hash/issues"
   },
   "require": {
-    "php": ">=5.5.0",
+    "php": ">=7.0.0",
     "composer/installers": "~1.0"
   },
   "autoload": {
     "psr-4": {
       "Ayesh\\WP_PasswordHash\\": "src/"
     },
-    "files": ["wp-php-password-hash.php"]
+    "files": [
+      "wp-php-password-hash.php"
+    ]
   }
 }
