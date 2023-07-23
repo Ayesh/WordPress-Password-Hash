@@ -68,7 +68,7 @@ final class PasswordHash {
 	 * @return bool False, if the $password does not match the hashed password
 	 *
 	 */
-	public function checkPassword($password, $hash, $user_id = ''): bool {
+	public function checkPassword(string $password, string $hash, $user_id = ''): bool {
 		// Check if the hash uses Password API.
 		$info = password_get_info($hash);
 		if (!empty($info['algo'])) {
@@ -85,23 +85,25 @@ final class PasswordHash {
 	}
 
 	/**
-	 * Hash password using @see password_hash() function.
+	 * Hash password using @param string $password Plaintext password
 	 *
-	 * @param string $password Plaintext password
 	 * @return false|string
+	 *@see password_hash() function.
+	 *
 	 */
-	public function getHash($password) {
+	public function getHash(string $password) {
 		return password_hash($password, $this->algorithm, $this->algorithm_options);
 	}
 
 	/**
-	 * Sets password hash taken from @see wp_hash_password().
+	 * Sets password hash taken from @param string $password password in plain text.
 	 *
-	 * @param string $password password in plain text.
 	 * @param int $user_id User ID of the user.
 	 * @return bool|string
+	 *@see wp_hash_password().
+	 *
 	 */
-	public function updateHash($password, $user_id) {
+	public function updateHash(string $password, int $user_id) {
 		$hash = $this->getHash($password);
 		$fields = [ 'user_pass' => &$hash, 'user_activation_key' => '' ];
 		$conditions = [ 'ID' => $user_id ];
